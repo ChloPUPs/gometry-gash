@@ -17,7 +17,7 @@ class InputState:
             'up': self.EventInfo(pg.K_UP),
             'space': self.EventInfo(pg.K_SPACE),
         }
-    
+
     def update_just_pressed(self):
         """Makes just_pressed and just_released things just pressed."""
         for ekey in self.events:
