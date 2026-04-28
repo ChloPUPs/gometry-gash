@@ -4,7 +4,7 @@ from scripts.input import InputState
 from scripts.space import Vector2
 
 class Player:
-    def __init__(self, x_offset, y):
+    def __init__(self, x_offset, y, ground_y):
         self.SPEED = 4.0
         self.JUMP_STRENGTH = 6.0
 
@@ -12,21 +12,35 @@ class Player:
         self.x_offset = x_offset
         self.velocity = Vector2(0.0, 0.0)
         self.image = pg.image.load("./data/art/player.png")
+        self._ground_y = ground_y
 
     @property
     def draw_dest(self):
         return (self.x_offset, self.rect.y)
+    
+    @property
+    def in_floor(self):
+        return self.rect.y + self.rect.h >= self._ground_y
+    
+    @property
+    def on_floor(self):
+        return self.rect.y + self.rect.h + 1.0 >= self._ground_y
 
     def update(self, input_state):
         self.velocity.x = self.SPEED
 
-        assert input_state.__class__.__name__ == "InputState", "oops"
-
-        if input_state.events['space'].just_pressed:
-            self.velocity.y = -self.JUMP_STRENGTH
-
         # Gravity
         self.velocity.y += 0.3
+
+        # Ground Collision
+        if self.in_floor:
+            self.velocity.y = 0.0
+            self.rect.y = self._ground_y - self.rect.h
+
+        assert input_state.__class__.__name__ == "InputState", "oops"
+
+        if input_state.events['space'].just_pressed and self.on_floor:
+            self.velocity.y = -self.JUMP_STRENGTH
 
     def apply_velocity(self):
         self.rect.x += self.velocity.x
@@ -43,7 +57,9 @@ def main():
     # Game stuff
     input_state = InputState()
 
-    player = Player(x_offset=200, y=screen.height - 140)
+    player = Player(x_offset=200,
+            y=screen.height - 142,
+            ground_y=screen.height - 120)
 
     while True:
         input_state.update_just_pressed()
