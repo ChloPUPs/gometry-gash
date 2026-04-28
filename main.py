@@ -22,8 +22,6 @@ class Player:
 
         assert input_state.__class__.__name__ == "InputState", "oops"
 
-        #print(input_state.events['space'].just_pressed)
-
         if input_state.events['space'].just_pressed:
             self.velocity.y = -self.JUMP_STRENGTH
 
