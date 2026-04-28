@@ -2,6 +2,7 @@ import pygame as pg
 import sys
 from scripts.input import InputState
 from scripts.space import Vector2
+from scripts.utils import center_rot_blit
 
 class Player:
     def __init__(self, x_offset, y, ground_y):
@@ -12,6 +13,8 @@ class Player:
         self.x_offset = x_offset
         self.velocity = Vector2(0.0, 0.0)
         self.image = pg.image.load("./data/art/player.png")
+        self.rotation = 0.0
+
         self._ground_y = ground_y
 
     @property
@@ -51,6 +54,8 @@ class Player:
         return self.y + self.h + 1.0 >= self._ground_y
 
     def update(self, input_state):
+        self.rotation += 1
+
         self.velocity.x = self.SPEED
 
         # Gravity
@@ -63,7 +68,14 @@ class Player:
 
         assert input_state.__class__.__name__ == "InputState", "oops"
 
-        if input_state.events['space'].held and self.on_floor:
+        # Jump
+        if (
+                (
+                    input_state.events['space'].held
+                    or input_state.events['up'].held
+                    )
+                and self.on_floor
+            ):
             self.velocity.y = -self.JUMP_STRENGTH
 
     def apply_velocity(self):
@@ -99,7 +111,10 @@ def main():
 
         screen.fill((255, 255, 255))
 
-        screen.blit(player.image, player.draw_dest)
+        center_rot_blit(screen,
+                player.image,
+                player.rotation,
+                player.draw_dest)
 
         clock.tick(TARGET_FRAMERATE)
         pg.display.flip()
