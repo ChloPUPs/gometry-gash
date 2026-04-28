@@ -15,26 +15,30 @@ class InputState:
             'right': self.EventInfo(pg.K_RIGHT),
             'down': self.EventInfo(pg.K_DOWN),
             'up': self.EventInfo(pg.K_UP),
+            'space': self.EventInfo(pg.K_SPACE),
         }
+    
+    def update_just_pressed(self):
+        """Makes just_pressed and just_released things just pressed."""
+        for ekey in self.events:
+            # Make sure just_pressed things are JUST pressed
+            if self.events[ekey].just_pressed:
+                self.events[ekey].just_pressed = False
+            if self.events[ekey].just_released:
+                self.events[ekey].just_released = False
 
     def update_input(self, event):
-        for eventinfo in self.events.values():
-            # Make sure just_pressed things are JUST pressed
-            if eventinfo.just_pressed == True:
-                eventinfo.just_pressed = False
-            if eventinfo.just_released == True:
-                eventinfo.just_released = False
-
+        for ekey in self.events:
             # Check event stuff for every non key thing in the thing
-            if event.type == eventinfo.eventtype:
-                eventinfo.just_pressed = True
+            if event.type == self.events[ekey].eventtype:
+                self.events[ekey].just_pressed = True
 
             # Do the keys
             if event.type == pg.KEYDOWN:
-                if event.key == eventinfo.eventtype:
-                    eventinfo.held = True
-                    eventinfo.just_pressed = True
+                if event.key == self.events[ekey].eventtype:
+                    self.events[ekey].held = True
+                    self.events[ekey].just_pressed = True
             if event.type == pg.KEYUP:
-                if event.key == eventinfo.eventtype:
-                    eventinfo.held = False
-                    eventinfo.just_released = True
+                if event.key == self.events[ekey].eventtype:
+                    self.events[ekey].held = False
+                    self.events[ekey].just_released = True
