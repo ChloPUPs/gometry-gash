@@ -4,3 +4,6 @@ def center_rot_blit(surface, source, angle, topleft):
     rotated = pg.transform.rotate(source, angle)
     dest = rotated.get_rect(center=source.get_rect(topleft=topleft).center)
     surface.blit(rotated, dest)
+
+def round_to_mult(num, mult):
+    return mult * round(num / mult)

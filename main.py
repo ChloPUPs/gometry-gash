@@ -2,7 +2,7 @@ import pygame as pg
 import sys
 from scripts.input import InputState
 from scripts.space import Vector2
-from scripts.utils import center_rot_blit
+from scripts.utils import center_rot_blit, round_to_mult
 
 class Player:
     def __init__(self, x_offset, y, ground_y):
@@ -54,8 +54,6 @@ class Player:
         return self.y + self.h + 1.0 >= self._ground_y
 
     def update(self, input_state):
-        self.rotation += 1
-
         self.velocity.x = self.SPEED
 
         # Gravity
@@ -65,6 +63,9 @@ class Player:
         if self.in_floor:
             self.velocity.y = 0.0
             self.y = self._ground_y - self.h
+            self.rotation = round_to_mult(self.rotation, 90)
+        else:
+            self.rotation -= 4.4
 
         assert input_state.__class__.__name__ == "InputState", "oops"
 
@@ -96,6 +97,8 @@ def main():
     player = Player(x_offset=200,
             y=screen.height - 142,
             ground_y=screen.height - 120)
+
+    pg.display.set_icon(player.image)
 
     while True:
         input_state.update_just_pressed()
