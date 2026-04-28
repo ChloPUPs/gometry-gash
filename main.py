@@ -63,7 +63,7 @@ class Player:
 
         assert input_state.__class__.__name__ == "InputState", "oops"
 
-        if input_state.events['space'].just_pressed and self.on_floor:
+        if input_state.events['space'].held and self.on_floor:
             self.velocity.y = -self.JUMP_STRENGTH
 
     def apply_velocity(self):
