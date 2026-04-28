@@ -99,6 +99,7 @@ def main():
             ground_y=screen.height - 120)
 
     pg.display.set_icon(player.image)
+    pg.display.set_caption("Gometry Gash")
 
     while True:
         input_state.update_just_pressed()
