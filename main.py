@@ -33,7 +33,7 @@ class Player:
     @property
     def w(self):
         return self.rect.w
-    
+
     @property
     def h(self):
         return self.rect.h
@@ -41,11 +41,11 @@ class Player:
     @property
     def draw_dest(self):
         return (self.x_offset, self.y)
-    
+
     @property
     def in_floor(self):
         return self.y + self.h >= self._ground_y
-    
+
     @property
     def on_floor(self):
         return self.y + self.h + 1.0 >= self._ground_y
