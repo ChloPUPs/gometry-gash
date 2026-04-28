@@ -15,16 +15,40 @@ class Player:
         self._ground_y = ground_y
 
     @property
+    def x(self):
+        return self.rect.x
+
+    @x.setter
+    def x(self, val):
+        self.rect.x = val
+
+    @property
+    def y(self):
+        return self.rect.y
+
+    @y.setter
+    def y(self, val):
+        self.rect.y = val
+
+    @property
+    def w(self):
+        return self.rect.w
+    
+    @property
+    def h(self):
+        return self.rect.h
+
+    @property
     def draw_dest(self):
-        return (self.x_offset, self.rect.y)
+        return (self.x_offset, self.y)
     
     @property
     def in_floor(self):
-        return self.rect.y + self.rect.h >= self._ground_y
+        return self.y + self.h >= self._ground_y
     
     @property
     def on_floor(self):
-        return self.rect.y + self.rect.h + 1.0 >= self._ground_y
+        return self.y + self.h + 1.0 >= self._ground_y
 
     def update(self, input_state):
         self.velocity.x = self.SPEED
@@ -35,7 +59,7 @@ class Player:
         # Ground Collision
         if self.in_floor:
             self.velocity.y = 0.0
-            self.rect.y = self._ground_y - self.rect.h
+            self.y = self._ground_y - self.h
 
         assert input_state.__class__.__name__ == "InputState", "oops"
 
@@ -43,8 +67,8 @@ class Player:
             self.velocity.y = -self.JUMP_STRENGTH
 
     def apply_velocity(self):
-        self.rect.x += self.velocity.x
-        self.rect.y += self.velocity.y
+        self.x += self.velocity.x
+        self.y += self.velocity.y
 
 def main():
     pg.init()
