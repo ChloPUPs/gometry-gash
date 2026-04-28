@@ -16,7 +16,7 @@ class InputState:
             'down': self.EventInfo(pg.K_DOWN),
             'up': self.EventInfo(pg.K_UP),
         }
-    
+
     def update_input(self, event):
         for eventinfo in self.events.values():
             # Make sure just_pressed things are JUST pressed
