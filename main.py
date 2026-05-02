@@ -4,7 +4,8 @@ import pygame as pg
 import sys
 import random
 from scripts.input import InputState
-from scripts.utils import center_rot_blit
+from scripts.utils import center_rot_blit, display_text
+from scripts.space import Vector2
 from scripts.obstacle import ObstacleSpawner
 from scripts.player import Player
 
@@ -19,7 +20,7 @@ def main():
     # Game stuff
     input_state = InputState()
 
-    GROUND_Y = screen.height - 120
+    GROUND_Y = float(screen.height - 120)
 
     player = Player(x_offset=200,
             y=GROUND_Y - 32,
@@ -50,12 +51,12 @@ def main():
         player.update(input_state)
         player.apply_velocity()
 
-        for s in spike_spawner.spawned:
+        for s in spike_spawner.alive:
             s.handle_collision(player)
 
         screen.fill((0, 200, 255))
 
-        for s in spike_spawner.spawned:
+        for s in spike_spawner.alive:
             s.draw_x = s.x - player.x + player.x_offset
             screen.blit(s.image, (s.draw_x, s.y))
 
@@ -63,6 +64,17 @@ def main():
                 player.image,
                 player.rotation,
                 player.draw_dest)
+
+        pg.draw.rect(screen,
+                (0, 200, 0),
+                pg.Rect(0, GROUND_Y, screen.width, screen.height - GROUND_Y))
+
+        display_text(screen,
+                f"Spikes Observed: {spike_spawner.total_spawned}",
+                Vector2(10, 10),
+                "./data/font/inter.ttf",
+                16,
+                (0, 0, 0))
 
         clock.tick(TARGET_FRAMERATE)
         pg.display.flip()

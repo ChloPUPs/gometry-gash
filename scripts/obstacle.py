@@ -41,7 +41,8 @@ class ObstacleSpawner:
     def __init__(self, x, y) -> None:
         self.x = x
         self.y = y
-        self.spawned = []
+        self.alive = []
+        self.total_spawned = 0
         # Frames since last spawn
         self._frames = 0
         self._current_goal = random.randrange(20, 300)
@@ -49,7 +50,8 @@ class ObstacleSpawner:
         self.spawn()
 
     def spawn(self):
-        self.spawned.append(Obstacle(self.x, self.y))
+        self.alive.append(Obstacle(self.x, self.y))
+        self.total_spawned += 1
         print("Spike spawned")
 
     def handle_spawning(self):
@@ -62,6 +64,6 @@ class ObstacleSpawner:
 
     def remove_oob(self):
         """Remove all spikes off the screen to left."""
-        for o in self.spawned:
+        for o in self.alive:
             if o.draw_x + o.rect.w < 0.0:
-                self.spawned.remove(o)
+                self.alive.remove(o)
