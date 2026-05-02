@@ -1,5 +1,8 @@
+# TODO: add spikes observed counter
+
 import pygame as pg
 import sys
+import random
 from scripts.input import InputState
 from scripts.space import Vector2
 from scripts.utils import center_rot_blit, round_to_mult
@@ -83,6 +86,74 @@ class Player:
         self.x += self.velocity.x
         self.y += self.velocity.y
 
+    def kill(self):
+        print("oh no dead")
+
+class Obstacle:
+    def __init__(self, cx, y):
+        self.draw_x = -1.0
+        self.image = pg.transform.scale(
+                pg.image.load("./data/art/spike.png"),
+                (32, 32))
+        self.rect = self.image.get_rect(w=24, center=(cx, y))
+
+    @property
+    def x(self):
+        return self.rect.x
+
+    @x.setter
+    def x(self, val):
+        self.rect.x = val
+
+    @property
+    def y(self):
+        return self.rect.y
+
+    @y.setter
+    def y(self, val):
+        self.rect.y = val
+
+    @property
+    def w(self):
+        return self.rect.w
+
+    @property
+    def h(self):
+        return self.rect.h
+
+    def handle_collision(self, player):
+        if self.rect.colliderect(player.rect):
+            player.kill()
+
+class ObstacleSpawner:
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+        self.spawned = []
+        # Frames since last spawn
+        self._frames = 0
+        self._current_goal = random.randrange(20, 300)
+
+        self.spawn()
+
+    def spawn(self):
+        self.spawned.append(Obstacle(self.x, self.y))
+        print("Spike spawned")
+
+    def handle_spawning(self):
+        self._frames += 1
+        if self._frames > self._current_goal:
+            random.randrange(20, 300)
+            self.spawn()
+            self._current_goal = random.randrange(20, 300)
+            self._frames = 0
+
+    def remove_oob(self):
+        """Remove all spikes off the screen to left."""
+        for o in self.spawned:
+            if o.draw_x + o.rect.w < 0.0:
+                self.spawned.remove(o)
+
 def main():
     pg.init()
 
@@ -101,6 +172,10 @@ def main():
     pg.display.set_icon(player.image)
     pg.display.set_caption("Gometry Gash")
 
+    spike_spawner = ObstacleSpawner(
+            screen.width + 16 + player.x - player.x_offset,
+            player.y + 6)
+
     while True:
         input_state.update_just_pressed()
         for event in pg.event.get():
@@ -110,10 +185,23 @@ def main():
             pg.quit()
             sys.exit()
 
+        # Update position of spike spawner to always be at screen end
+        spike_spawner.x = screen.width + 16 + player.x - player.x_offset
+
+        spike_spawner.remove_oob()
+        spike_spawner.handle_spawning()
+
         player.update(input_state)
         player.apply_velocity()
 
-        screen.fill((255, 255, 255))
+        for s in spike_spawner.spawned:
+            s.handle_collision(player)
+
+        screen.fill((0, 200, 255))
+
+        for s in spike_spawner.spawned:
+            s.draw_x = s.x - player.x + player.x_offset
+            screen.blit(s.image, (s.draw_x, s.y))
 
         center_rot_blit(screen,
                 player.image,
