@@ -4,155 +4,9 @@ import pygame as pg
 import sys
 import random
 from scripts.input import InputState
-from scripts.space import Vector2
-from scripts.utils import center_rot_blit, round_to_mult
-
-class Player:
-    def __init__(self, x_offset, y, ground_y):
-        self.SPEED = 4.0
-        self.JUMP_STRENGTH = 6.0
-
-        self.rect = pg.FRect(0.0, y, 32.0, 32.0)
-        self.x_offset = x_offset
-        self.velocity = Vector2(0.0, 0.0)
-        self.image = pg.image.load("./data/art/player.png")
-        self.rotation = 0.0
-
-        self._ground_y = ground_y
-
-    @property
-    def x(self):
-        return self.rect.x
-
-    @x.setter
-    def x(self, val):
-        self.rect.x = val
-
-    @property
-    def y(self):
-        return self.rect.y
-
-    @y.setter
-    def y(self, val):
-        self.rect.y = val
-
-    @property
-    def w(self):
-        return self.rect.w
-
-    @property
-    def h(self):
-        return self.rect.h
-
-    @property
-    def draw_dest(self):
-        return (self.x_offset, self.y)
-
-    @property
-    def in_floor(self):
-        return self.y + self.h >= self._ground_y
-
-    @property
-    def on_floor(self):
-        return self.y + self.h + 1.0 >= self._ground_y
-
-    def update(self, input_state):
-        self.velocity.x = self.SPEED
-
-        # Gravity
-        self.velocity.y += 0.3
-
-        # Ground Collision
-        if self.in_floor:
-            self.velocity.y = 0.0
-            self.y = self._ground_y - self.h
-            self.rotation = round_to_mult(self.rotation, 90)
-        else:
-            self.rotation -= 4.4
-
-        assert input_state.__class__.__name__ == "InputState", "oops"
-
-        # Jump
-        if (
-                (
-                    input_state.events['space'].held
-                    or input_state.events['up'].held
-                    )
-                and self.on_floor
-            ):
-            self.velocity.y = -self.JUMP_STRENGTH
-
-    def apply_velocity(self):
-        self.x += self.velocity.x
-        self.y += self.velocity.y
-
-    def kill(self):
-        print("oh no dead")
-
-class Obstacle:
-    def __init__(self, cx, y):
-        self.draw_x = -1.0
-        self.image = pg.transform.scale(
-                pg.image.load("./data/art/spike.png"),
-                (32, 32))
-        self.rect = self.image.get_rect(w=24, center=(cx, y))
-
-    @property
-    def x(self):
-        return self.rect.x
-
-    @x.setter
-    def x(self, val):
-        self.rect.x = val
-
-    @property
-    def y(self):
-        return self.rect.y
-
-    @y.setter
-    def y(self, val):
-        self.rect.y = val
-
-    @property
-    def w(self):
-        return self.rect.w
-
-    @property
-    def h(self):
-        return self.rect.h
-
-    def handle_collision(self, player):
-        if self.rect.colliderect(player.rect):
-            player.kill()
-
-class ObstacleSpawner:
-    def __init__(self, x, y) -> None:
-        self.x = x
-        self.y = y
-        self.spawned = []
-        # Frames since last spawn
-        self._frames = 0
-        self._current_goal = random.randrange(20, 300)
-
-        self.spawn()
-
-    def spawn(self):
-        self.spawned.append(Obstacle(self.x, self.y))
-        print("Spike spawned")
-
-    def handle_spawning(self):
-        self._frames += 1
-        if self._frames > self._current_goal:
-            random.randrange(20, 300)
-            self.spawn()
-            self._current_goal = random.randrange(20, 300)
-            self._frames = 0
-
-    def remove_oob(self):
-        """Remove all spikes off the screen to left."""
-        for o in self.spawned:
-            if o.draw_x + o.rect.w < 0.0:
-                self.spawned.remove(o)
+from scripts.utils import center_rot_blit
+from scripts.obstacle import ObstacleSpawner
+from scripts.player import Player
 
 def main():
     pg.init()
@@ -165,16 +19,18 @@ def main():
     # Game stuff
     input_state = InputState()
 
+    GROUND_Y = screen.height - 120
+
     player = Player(x_offset=200,
-            y=screen.height - 142,
-            ground_y=screen.height - 120)
+            y=GROUND_Y - 32,
+            ground_y=GROUND_Y)
 
     pg.display.set_icon(player.image)
     pg.display.set_caption("Gometry Gash")
 
     spike_spawner = ObstacleSpawner(
             screen.width + 16 + player.x - player.x_offset,
-            player.y + 6)
+            GROUND_Y - 16)
 
     while True:
         input_state.update_just_pressed()
