@@ -1,5 +1,3 @@
-# TODO: add spikes observed counter
-
 import pygame as pg
 import sys
 import random
