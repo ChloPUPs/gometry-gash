@@ -2,5 +2,8 @@
 *.vscode/
 *.venv/
 scripts/test/
+dist/
+build/
+*.spec
 # game save
 data/save.txt
