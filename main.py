@@ -1,6 +1,5 @@
 import pygame as pg
 import sys
-import random
 from scripts.input import InputState
 from scripts.utils import center_rot_blit, display_text
 from scripts.space import Vector2
