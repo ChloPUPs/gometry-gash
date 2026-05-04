@@ -98,7 +98,7 @@ def main():
                     (0, 0, 0))
         elif game_state == 'death':
             screen.fill('white')
-            display_text(screen, f"dieded\nscore:{spike_spawner.total_spawned}",
+            display_text(screen, f"dieded\nscore: {spike_spawner.total_spawned}",
                     Vector2(screen.width / 2, screen.height / 2),
                     "./data/font/inter.ttf")
 
