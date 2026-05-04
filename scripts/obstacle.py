@@ -35,7 +35,7 @@ class Obstacle:
 
     def handle_collision(self, player):
         if self.rect.colliderect(player.rect):
-            player.kill()
+            player.alive = False
 
 class ObstacleSpawner:
     def __init__(self, x, y) -> None:

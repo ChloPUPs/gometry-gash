@@ -2,3 +2,5 @@
 *.vscode/
 *.venv/
 scripts/test/
+# game save
+data/save.txt

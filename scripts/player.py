@@ -12,6 +12,7 @@ class Player:
         self.velocity = Vector2(0.0, 0.0)
         self.image = pg.image.load("./data/art/player.png")
         self.rotation = 0.0
+        self.alive = True
 
         self._ground_y = ground_y
 
@@ -80,6 +81,3 @@ class Player:
     def apply_velocity(self):
         self.x += self.velocity.x
         self.y += self.velocity.y
-
-    def kill(self):
-        print("oh no dead")
