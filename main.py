@@ -34,6 +34,9 @@ def main():
     pg.mixer.music.load('./data/sound/km-msm.mp3')
     pg.mixer.music.play()
 
+    observe_sfx = pg.Sound('./data/sound/observe.mp3')
+    death_sfx = pg.Sound('./data/sound/player-death.mp3')
+
     GROUND_Y = float(screen.height - 120)
 
     player = Player(x_offset=200,
@@ -45,7 +48,8 @@ def main():
 
     spike_spawner = ObstacleSpawner(
             screen.width + 16 + player.x - player.x_offset,
-            GROUND_Y - 16)
+            GROUND_Y - 16,
+            observe_sfx)
 
     death_timer = 0
 
@@ -69,7 +73,7 @@ def main():
             player.apply_velocity()
 
             for s in spike_spawner.alive:
-                s.handle_collision(player)
+                s.handle_collision(player, death_sfx)
 
             if not player.alive:
                 game_state = 'death'

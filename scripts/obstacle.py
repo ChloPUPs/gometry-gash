@@ -33,16 +33,18 @@ class Obstacle:
     def h(self):
         return self.rect.h
 
-    def handle_collision(self, player):
+    def handle_collision(self, player, player_death_sfx):
         if self.rect.colliderect(player.rect):
             player.alive = False
+            player_death_sfx.play()
 
 class ObstacleSpawner:
-    def __init__(self, x, y) -> None:
+    def __init__(self, x, y, spawn_sfx) -> None:
         self.x = x
         self.y = y
         self.alive = []
         self.total_spawned = 0
+        self.spawn_sfx = spawn_sfx
         # Frames since last spawn
         self._frames = 0
         self._current_goal = random.randrange(20, 300)
@@ -52,6 +54,7 @@ class ObstacleSpawner:
     def spawn(self):
         self.alive.append(Obstacle(self.x, self.y))
         self.total_spawned += 1
+        self.spawn_sfx.play()
         print("Spike spawned")
 
     def handle_spawning(self):
