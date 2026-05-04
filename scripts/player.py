@@ -73,6 +73,7 @@ class Player:
                 (
                     input_state.events['space'].held
                     or input_state.events['up'].held
+                    or input_state.events['mouse1'].held
                     )
                 and self.on_floor
             ):

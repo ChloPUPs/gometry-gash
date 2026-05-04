@@ -8,6 +8,11 @@ class InputState:
             self.just_released = False
             self.eventtype = eventtype
 
+    class MouseEventInfo(EventInfo):
+        def __init__(self, button) -> None:
+            super().__init__(pg.MOUSEBUTTONDOWN, False)
+            self.button = button
+
     def __init__(self):
         self.events = {
             'quit': self.EventInfo(pg.QUIT, False),
@@ -16,6 +21,7 @@ class InputState:
             'down': self.EventInfo(pg.K_DOWN),
             'up': self.EventInfo(pg.K_UP),
             'space': self.EventInfo(pg.K_SPACE),
+            'mouse1': self.MouseEventInfo(1),
         }
 
     def update_just_pressed(self):
@@ -30,7 +36,10 @@ class InputState:
     def update_input(self, event):
         for ekey in self.events:
             # Check event stuff for every non key thing in the thing
-            if event.type == self.events[ekey].eventtype:
+            if event.type == self.events[ekey].eventtype and (
+                    event.type != pg.MOUSEBUTTONDOWN
+                    and event.type != pg.MOUSEBUTTONUP
+                    ):
                 self.events[ekey].just_pressed = True
 
             # Do the keys
@@ -42,3 +51,14 @@ class InputState:
                 if event.key == self.events[ekey].eventtype:
                     self.events[ekey].held = False
                     self.events[ekey].just_released = True
+
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if hasattr(self.events[ekey], 'button'):
+                    if event.button == self.events[ekey].button:
+                        self.events[ekey].held = True
+                        self.events[ekey].just_pressed = True
+            if event.type == pg.MOUSEBUTTONUP:
+                if hasattr(self.events[ekey], 'button'):
+                    if event.button == self.events[ekey].button:
+                        self.events[ekey].held = False
+                        self.events[ekey].just_released = True
