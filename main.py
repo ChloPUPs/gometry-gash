@@ -30,6 +30,9 @@ def main():
                 ...
     except FileNotFoundError:
         ...
+    
+    pg.mixer.music.load('./data/sound/km-msm.mp3')
+    pg.mixer.music.play()
 
     GROUND_Y = float(screen.height - 120)
 
@@ -75,6 +78,7 @@ def main():
                         highscore = spike_spawner.total_spawned
                         f.write(f'hs:{spike_spawner.total_spawned}')
                 pg.mouse.set_visible(True)
+                pg.mixer.music.pause()
 
             screen.fill((0, 200, 255))
 
@@ -117,6 +121,7 @@ def main():
                 game_state = 'gameplay'
                 spike_spawner.spawn()
                 pg.mouse.set_visible(False)
+                pg.mixer.music.play()
 
         clock.tick(TARGET_FRAMERATE)
         pg.display.flip()
