@@ -57,9 +57,8 @@ class ObstacleSpawner:
     def handle_spawning(self):
         self._frames += 1
         if self._frames > self._current_goal:
-            random.randrange(20, 300)
             self.spawn()
-            self._current_goal = random.randrange(20, 300)
+            self._current_goal = random.randrange(40, 300)
             self._frames = 0
 
     def remove_oob(self):
