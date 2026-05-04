@@ -6,11 +6,9 @@ from scripts.space import Vector2
 from scripts.obstacle import ObstacleSpawner
 from scripts.player import Player
 
-def save(highscore, spike_total):
+def save(spike_total):
     with open('./data/save.txt', 'w') as f:
-        if spike_total > highscore:
-            highscore = spike_total
-            f.write(f'hs:{spike_total}')
+        f.write(f'hs:{spike_total}')
 
 def main():
     pg.init()
@@ -65,7 +63,9 @@ def main():
             input_state.update_input(event)
 
         if input_state.events['quit'].just_pressed:
-            save(highscore, spike_spawner.total_spawned)
+            if spike_spawner.total_spawned > highscore:
+                highscore = spike_spawner.total_spawned
+                save(spike_spawner.total_spawned)
             pg.quit()
             sys.exit()
 
@@ -84,7 +84,9 @@ def main():
 
             if not player.alive:
                 game_state = 'death'
-                save(highscore, spike_spawner.total_spawned)
+                if spike_spawner.total_spawned > highscore:
+                    highscore = spike_spawner.total_spawned
+                    save(spike_spawner.total_spawned)
                 pg.mouse.set_visible(True)
                 pg.mixer.music.pause()
 
