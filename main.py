@@ -14,6 +14,7 @@ def main():
     clock = pg.Clock()
     TARGET_FRAMERATE = 60
     input_state = InputState()
+    pg.mouse.set_visible(False)
 
     # Game stuff
     game_state = 'gameplay'
@@ -73,6 +74,7 @@ def main():
                     if spike_spawner.total_spawned > highscore:
                         highscore = spike_spawner.total_spawned
                         f.write(f'hs:{spike_spawner.total_spawned}')
+                pg.mouse.set_visible(True)
 
             screen.fill((0, 200, 255))
 
@@ -114,6 +116,7 @@ def main():
                 spike_spawner.total_spawned = 0
                 game_state = 'gameplay'
                 spike_spawner.spawn()
+                pg.mouse.set_visible(False)
 
         clock.tick(TARGET_FRAMERATE)
         pg.display.flip()
